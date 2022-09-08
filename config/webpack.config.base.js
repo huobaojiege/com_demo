@@ -11,6 +11,7 @@ const ROOTPATH = path.join(process.cwd());
 const APP_PATH = path.join(ROOTPATH, "/src");
 const pageDir = path.resolve(ROOTPATH, "./entry");
 
+const paths = require("./paths");
 
 function getEntry() {
   let entryMap = {};
@@ -38,10 +39,12 @@ function getEntry() {
   return entryMap;
 }
 module.exports = {
-  entry: getEntry(),
+  // entry: getEntry(),
+  entry: paths.appIndexJs,
   output: {
     path: path.resolve(ROOTPATH, "./dist"),
     filename: "js/[name].js?[chunkhash:8]",
+    publicPath: paths.publicUrlOrPath,
     clean: true,
   },
   module: {
@@ -69,7 +72,16 @@ module.exports = {
           },
           "postcss-loader",
           "sass-loader",
-          'less-loader'
+          {
+            loader: "less-loader",
+            options: {
+              sourceMap: true,
+              lessOptions: {
+                // 如果使用less-loader@5，需要移除 lessOptions 这一级
+                javascriptEnabled: true,
+              },
+            },
+          },
         ],
       },
       {
@@ -87,7 +99,16 @@ module.exports = {
           },
           "postcss-loader",
           "sass-loader",
-          'less-loader'
+          {
+            loader: "less-loader",
+            options: {
+              sourceMap: true,
+              lessOptions: {
+                // 如果使用less-loader@5，需要移除 lessOptions 这一级
+                javascriptEnabled: true,
+              },
+            },
+          },
         ],
       },
       {

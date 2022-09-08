@@ -10,6 +10,7 @@ const config = merge(baseConfig, {
     static: {
       directory: path.join(__dirname, "public"),
     },
+    historyApiFallback: true,
     compress: true,
     allowedHosts: "all",
     port: 9004,

@@ -13,6 +13,15 @@ lerna-debug.log*
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+
+# production
+/build
+
 # Runtime data
 pids
 *.pid
