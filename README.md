@@ -1,9 +1,5 @@
-# Tm 接待页 项目文档
+# react项目 基础demo
 
-
-### 切换公司的npm 源地址, 建议使用nrm 去管理npm源。
-
-`npm set registry http://npm.focustech.vemic.com/`
 
 ### install npm packages
 
