@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+     "outDir": "./dist/",
+     "sourceMap": true, // 开启sourcemap
+     "module": "esnext",
+     "target": "esnext",
+     "lib": ["dom", "esnext"],
+     "jsx": "react",
+     "esModuleInterop": true,
+     "allowJs": true,
+     "moduleResolution":"node",
+     "noImplicitAny": true,
+     "baseUrl": ".",
+     "paths": {
+         "@/*": ["src/*"]
+     }
+     //"strict": true
+    },
+}
