@@ -73,6 +73,20 @@ export function checkObject(obj1: any, obj2: any, keys: string[]) {
 }
 
 /**
+ * 解析URL参数
+ *  假设目前位于 https://****com/index?id=154513&age=18;
+ * getSearchParams(); // {id: "154513", age: "18"}
+ */
+export const getSearchParams = () => {
+  const searchPar = new URLSearchParams(window.location.search);
+  const paramsObj: { [key: string]: any } = {};
+  for (const [key, value] of searchPar.entries()) {
+    paramsObj[key] = value;
+  }
+  return paramsObj;
+};
+
+/**
  * 获取地址栏参数
  */
 export function GetQueryString(
@@ -214,21 +228,6 @@ export function convertCurrency(money: any) {
 }
 
 /**
- * 超过多少字符显示胜率号 默认处理为15
- */
-export function ellipsisHandle(val: string, handleLength: number = 15) {
-  if (val && val.length > 0) {
-    if (val.length <= handleLength) {
-      return val;
-    } else {
-      return `${val.slice(0, handleLength)}...`;
-    }
-  } else {
-    return "";
-  }
-}
-
-/**
  * 千分位分隔符
  */
 export function thouSepar(s: any = 0) {
@@ -258,6 +257,62 @@ export function thouSepar(s: any = 0) {
     }
   }
   return (noNegative ? "" : "-") + t.split("").reverse().join("") + "." + dian;
+}
+
+/**
+ * 金额格式化
+ */
+//  {number} number：要格式化的数字
+//  {number} decimals：保留几位小数
+//  {string} dec_point：小数点符号
+//  {string} thousands_sep：千分位符号
+// 示例：
+
+// moneyFormat(10000000) // 10,000,000.00
+// moneyFormat(10000000, 3, '.', '-') // 10-000-000.000
+
+export const moneyFormat = (
+  number: number | string,
+  decimals: number,
+  dec_point: string,
+  thousands_sep: string
+) => {
+  number = (number + "").replace(/[^0-9+-Ee.]/g, "");
+  const n = !isFinite(+number) ? 0 : +number;
+  const prec = !isFinite(+decimals) ? 2 : Math.abs(decimals);
+  const sep = typeof thousands_sep === "undefined" ? "," : thousands_sep;
+  const dec = typeof dec_point === "undefined" ? "." : dec_point;
+  let s: any = "";
+  const toFixedFix = function (n: any, prec: any) {
+    const k = Math.pow(10, prec);
+    return "" + Math.ceil(n * k) / k;
+  };
+  s = (prec ? toFixedFix(n, prec) : "" + Math.round(n)).split(".");
+  const re = /(-?\d+)(\d{3})/;
+  while (re.test(s[0])) {
+    s[0] = s[0].replace(re, "$1" + sep + "$2");
+  }
+
+  if ((s[1] || "").length < prec) {
+    s[1] = s[1] || "";
+    s[1] += new Array(prec - s[1].length + 1).join("0");
+  }
+  return s.join(dec);
+};
+
+/**
+ * 超过多少字符显示胜率号 默认处理为15
+ */
+export function ellipsisHandle(val: string, handleLength: number = 15) {
+  if (val && val.length > 0) {
+    if (val.length <= handleLength) {
+      return val;
+    } else {
+      return `${val.slice(0, handleLength)}...`;
+    }
+  } else {
+    return "";
+  }
 }
 
 // 浮点型数据处理
@@ -349,3 +404,98 @@ export function Numberdiv(a: number, b: number): number {
     Numbermul(c / d, Math.pow(10, f - e))
   );
 }
+
+/**
+ * 校验数据类型
+ */
+//  typeOf('树哥')  // string
+//  typeOf([])  // array
+//  typeOf(new Date())  // date
+//  typeOf(null) // null
+//  typeOf(true) // boolean
+//  typeOf(() => { }) // function
+export function typeOf(obj: any) {
+  return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase();
+}
+
+/**
+ * 校验数据类型
+ * str 待转换的字符串
+ * type 1-全大写 2-全小写 3-首字母大写
+ *
+ * turnCase('vue', 1) // VUE
+ * turnCase('REACT', 2) // react
+ * turnCase('vue', 3) // Vue
+ */
+export const turnCase = (str: string, type: number) => {
+  switch (type) {
+    case 1:
+      return str.toUpperCase();
+    case 2:
+      return str.toLowerCase();
+    case 3:
+      //return str[0].toUpperCase() + str.substr(1).toLowerCase() // substr 已不推荐使用
+      return str[0].toUpperCase() + str.substring(1).toLowerCase();
+    default:
+      return str;
+  }
+};
+
+/**
+ * 校验数据类型
+ */
+//  const responseList = [
+//   { id: 1, name: '树哥' },
+//   { id: 2, name: '黄老爷' },
+//   { id: 3, name: '张麻子' },
+//   { id: 1, name: '黄老爷' },
+//   { id: 2, name: '张麻子' },
+//   { id: 3, name: '树哥' },
+//   { id: 1, name: '树哥' },
+//   { id: 2, name: '黄老爷' },
+//   { id: 3, name: '张麻子' },
+// ]
+
+// uniqueArrayObject(responseList, 'id')
+// [{ id: 1, name: '树哥' },{ id: 2, name: '黄老爷' },{ id: 3, name: '张麻子' }]
+
+export const uniqueArrayObject = (
+  arr: Array<{ [key: string]: any }> = [],
+  key = "id"
+) => {
+  if (arr.length === 0) return;
+  let list = [];
+  const map: {
+    [key: string]: any;
+  } = {};
+  arr.forEach((item) => {
+    if (!map[item[key]]) {
+      map[item[key]] = item;
+    }
+  });
+  list = Object.values(map);
+
+  return list;
+};
+
+/**
+ * 滚动到页面顶部
+ */
+export const scrollToTop = () => {
+  const height = document.documentElement.scrollTop || document.body.scrollTop;
+  if (height > 0) {
+    window.requestAnimationFrame(scrollToTop);
+    window.scrollTo(0, height - height / 8);
+  }
+};
+
+/**
+ * 滚动到元素位置
+ */
+//  smoothScroll('#target');
+// 平滑滚动到 ID 为 target 的元素
+export const smoothScroll = (element: string) => {
+  document.querySelector(element).scrollIntoView({
+    behavior: "smooth",
+  });
+};
